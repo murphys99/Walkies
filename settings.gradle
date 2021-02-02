@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "117478846-fyp"
