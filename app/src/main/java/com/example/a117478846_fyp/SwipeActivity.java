@@ -3,10 +3,12 @@ package com.example.a117478846_fyp;
 // adapted this video for matching users https://www.youtube.com/watch?v=Xp61U9sCiTw&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=9&pbjreload=101&ab_channel=SimCoder
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -46,10 +48,15 @@ public class SwipeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
 
+
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
         checkUserType();
+
+
+
+
 
 
         rowItems = new ArrayList<cards>();
@@ -86,7 +93,7 @@ public class SwipeActivity extends Activity {
                 String userId = obj.getUserId();
                 usersDb.child(oppositeUserType).child(userId).child("connections").child("yes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
                 isConnectionMatch(userId);
-                
+
 
                 Toast.makeText(SwipeActivity.this, "right", Toast.LENGTH_SHORT).show();
             }
@@ -246,12 +253,31 @@ public class SwipeActivity extends Activity {
             }
 
         });
+
+     /**   View b = findViewById(R.id.btnEdit);
+        if (userType == "Dog Walker"){
+            b.setVisibility(View.GONE);
+        }
+
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
+
     }
 
         static void makeToast (Context ctx, String s){
             Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
         }
 
-
+//Creating the edit profile page adapting code from: https://www.youtube.com/watch?v=MUiZhCUHXhk&ab_channel=SimCoder
+    public void goToSettings(View view) {
+        Intent intent = new Intent(SwipeActivity.this,SettingsActivity.class );
+        intent.putExtra("userType", userType);
+        startActivity(intent);
+        return;
     }
+}
 

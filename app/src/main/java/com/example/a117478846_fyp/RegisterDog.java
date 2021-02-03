@@ -3,7 +3,7 @@ package com.example.a117478846_fyp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
+//not functional yet
 public class RegisterDog extends AppCompatActivity {
 
     @Override

@@ -8,11 +8,19 @@
 
     <com.lorentzos.flingswipe.SwipeFlingAdapterView
         android:id="@+id/frame"
-        android:background="#ffeee9e2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:rotation_degrees="15.5"
         tools:context=".SwipeActivity" />
+
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="49dp"
+        android:layout_height="45dp"
+        android:onClick="goToSettings"
+        android:background="@drawable/ic_edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
