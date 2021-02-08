@@ -31,7 +31,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
+//Used a youtube tutorial to set up the edit profile functionality
+//https://www.youtube.com/watch?v=MUiZhCUHXhk&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=10&ab_channel=SimCoder
 public class SettingsActivity extends AppCompatActivity {
 
     private EditText mFnameField, mPhoneField, mBioField;
@@ -117,9 +118,16 @@ public class SettingsActivity extends AppCompatActivity {
                             bio = map.get("bio").toString();
                             mBioField.setText(bio);
                         }
+                        Glide.clear(mProfileImage);
                         if (map.get("profileImageUrl") != null) {
                             profileImageUrl = map.get("profileImageUrl").toString();
-                            Glide.with(getApplicationContext()).load(profileImageUrl).into(mProfileImage);
+                            switch (profileImageUrl) {
+                                case "default":
+                                    mProfileImage.setImageResource(R.mipmap.ic_launcher);
+                                    break;
+                                default:
+                                    Glide.with(getApplicationContext()).load(profileImageUrl).into(mProfileImage);
+                            }
                         }
                     }
                 }

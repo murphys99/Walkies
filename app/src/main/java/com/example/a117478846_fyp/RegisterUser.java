@@ -20,27 +20,33 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 //sourced code for registering from https://www.youtube.com/watch?v=Z-RE1QuUWPg&t=342s&ab_channel=CodeWithMazn&fbclid=IwAR1xxY3MO0NM4bjpQt1q9XrO3FZHv9A53QZse8vUEMzPKFFeEF_arCI6Lu8
 //
-public class RegisterUser extends AppCompatActivity implements View.OnClickListener{
-    EditText editFname, editLname, editEmail,editPassword,editPhone;
+public class RegisterUser extends AppCompatActivity implements View.OnClickListener {
+    EditText editFname, editLname, editEmail, editPassword, editPhone;
     Button btnRegister;
-    private ProgressBar progressBar;
     RadioGroup mRadioGroup;
 
 
-
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_user);
 
         mAuth = FirebaseAuth.getInstance();
+
+
 
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(this);
@@ -51,8 +57,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         editPassword = (EditText) findViewById(R.id.etPassword);
         editPhone = (EditText) findViewById(R.id.etPhone);
 
-        mRadioGroup= (RadioGroup) findViewById(R.id.radioGroup);
-
+        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
 
     }
@@ -60,7 +65,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnRegister:
                 registerUser();
                 break;
@@ -75,7 +80,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         String phone = editPhone.getText().toString().trim();
 
         int selectId = mRadioGroup.getCheckedRadioButtonId();
-        final  RadioButton radioButton = (RadioButton) findViewById(selectId);
+        final RadioButton radioButton = (RadioButton) findViewById(selectId);
 
         if (fname.isEmpty()) {
             editFname.setError("First name is required!");
@@ -94,23 +99,22 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
             return;
 
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             editEmail.setError("Please provide a valid email!");
             editEmail.requestFocus();
             return;
         }
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             editPassword.setError("Password is required!");
             editPassword.requestFocus();
             return;
         }
 
-        if(password.length() < 6){
+        if (password.length() < 6) {
             editPassword.setError("Minimum password length should be 6 characters!");
             editPassword.requestFocus();
             return;
         }
-
 
 
         if (phone.isEmpty()) {
@@ -119,45 +123,40 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        if(radioButton.getText() == null){
+        if (radioButton.getText() == null) {
             return;
         }
 
 
-
-
-        mAuth.createUserWithEmailAndPassword(email,password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        if(task.isSuccessful()){
-                            User user = new User(fname,lname,email,password,phone);
-
-                            FirebaseDatabase.getInstance().getReference().child("Users").child(radioButton.getText().toString())
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-
-
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-
-                                    if(task.isSuccessful()) {
-                                        Toast.makeText(RegisterUser.this, "User has been successfully registered!", Toast.LENGTH_LONG).show();
-                                        Intent menuIntent = new Intent(getApplicationContext(),MainActivity.class);
-                                        startActivity(menuIntent);
-
-                                        //redirect to login layout
-                                    }else{
-                                        Toast.makeText(RegisterUser.this,"Failed to register! Try again!",Toast.LENGTH_LONG).show();
-
-                                    }
-                                }
-                            });
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(RegisterUser.this, "Sign Up Error", Toast.LENGTH_LONG).show();
                         }else{
-                            Toast.makeText(RegisterUser.this,"Failed to register! Try again!",Toast.LENGTH_LONG).show();
-                        }
+                           // User user = new User(fname, lname, email, password, phone);
+                            String userId = mAuth.getCurrentUser().getUid();
 
+                            DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference().child("Users").child(radioButton.getText().toString())
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            Map userInfo = new HashMap<>();
+                            userInfo.put("fname",fname);
+                            userInfo.put("lname",lname);
+                            userInfo.put("email",email);
+                            userInfo.put("password",password);
+                            userInfo.put("phone",phone);
+                            userInfo.put("profileImageUrl", "default");
+                            currentUserDb .updateChildren(userInfo);
+
+                            Toast.makeText(RegisterUser.this, "User has been successfully registered!", Toast.LENGTH_LONG).show();
+                            Intent menuIntent = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(menuIntent);
+
+
+
+                        }
                     }
                 });
     }

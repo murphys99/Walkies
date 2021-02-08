@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+//Adapted code from this video https://www.youtube.com/watch?v=w-Uv-ydX_LY&ab_channel=CodeWithMazn
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private Button signIn;
     private TextView register, forgotPassword;

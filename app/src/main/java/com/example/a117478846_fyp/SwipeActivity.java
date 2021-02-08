@@ -1,6 +1,8 @@
 package com.example.a117478846_fyp;
 //potential matches to user video https://www.youtube.com/watch?v=xTGyUUsOTAQ&t=92s&ab_channel=SimCoder
 // adapted this video for matching users https://www.youtube.com/watch?v=Xp61U9sCiTw&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=9&pbjreload=101&ab_channel=SimCoder
+//setting an image to a card using this tutorial https://www.youtube.com/watch?v=h2yHW5wuxoE&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=12&ab_channel=SimCoder
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -223,8 +225,15 @@ public class SwipeActivity extends Activity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("no").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !dataSnapshot.child("connections").child("yes").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
 
+                    String profileImageUrl = "default";
+                    if(dataSnapshot.child("profileImageUrl").getValue() != null){
+                        if(!dataSnapshot.child("profileImageUrl").getValue().equals("default")){
+                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
-                    cards item = new cards(dataSnapshot.getKey(),dataSnapshot.child("fname").getValue().toString());
+                            }
+                    }
+
+                    cards item = new cards(dataSnapshot.getKey(),dataSnapshot.child("fname").getValue().toString(), profileImageUrl);
                     rowItems.add(item);
                     arrayAdapter.notifyDataSetChanged();
 
