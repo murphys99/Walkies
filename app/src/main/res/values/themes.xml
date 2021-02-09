@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name = "ButtonStyle123" parent="android:style/Widget.Button">
+    <style name="ButtonStyle123" parent="android:style/Widget.Button">
         <item name="android:textSize">19dp</item>
         <item name="android:layout_margin">8dp</item>
         <item name="android:padding">8dp</item>
@@ -23,4 +23,13 @@
         <item name="android:background">@color/white</item>
 
     </style>
+
+    <style name="NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

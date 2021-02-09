@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,7 +32,7 @@ import java.util.List;
 public class SwipeActivity extends Activity {
 
     private cards cards_data[];
-    private arrayAdapter arrayAdapter;
+    private com.example.a117478846_fyp.arrayAdapter arrayAdapter;
     private int i;
 
     private FirebaseAuth mAuth;
@@ -55,10 +53,6 @@ public class SwipeActivity extends Activity {
 
         mAuth = FirebaseAuth.getInstance();
         checkUserType();
-
-
-
-
 
 
         rowItems = new ArrayList<cards>();
@@ -82,24 +76,23 @@ public class SwipeActivity extends Activity {
             @Override
             public void onLeftCardExit(Object dataObject) {
 
-                cards obj = (cards)  dataObject;
+                cards obj = (cards) dataObject;
                 String userId = obj.getUserId();
-                usersDb.child(oppositeUserType).child(userId).child("connections").child("no").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+                usersDb.child(userId).child("connections").child("no").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
 
                 Toast.makeText(SwipeActivity.this, "left", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                cards obj = (cards)  dataObject;
+                cards obj = (cards) dataObject;
                 String userId = obj.getUserId();
-                usersDb.child(oppositeUserType).child(userId).child("connections").child("yes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+                usersDb.child(userId).child("connections").child("yes").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
                 isConnectionMatch(userId);
 
 
                 Toast.makeText(SwipeActivity.this, "right", Toast.LENGTH_SHORT).show();
             }
-
 
 
             @Override
@@ -123,15 +116,15 @@ public class SwipeActivity extends Activity {
     }
 
     private void isConnectionMatch(String userId) {
-        DatabaseReference currentUserConnectionDb =  usersDb.child(userType).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("connections").child("yes").child(userId);
+        DatabaseReference currentUserConnectionDb = usersDb.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("connections").child("yes").child(userId);
         currentUserConnectionDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               if (dataSnapshot.exists()){
-                   Toast.makeText(SwipeActivity.this,"New connection", Toast.LENGTH_LONG).show();
-                   usersDb.child(oppositeUserType).child(dataSnapshot.getKey()).child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
-                   usersDb.child(userType).child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(dataSnapshot.getKey()).setValue(true);
-               }
+                if (dataSnapshot.exists()) {
+                    Toast.makeText(SwipeActivity.this, "New connection", Toast.LENGTH_LONG).show();
+                    usersDb.child(dataSnapshot.getKey()).child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
+                    usersDb.child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(dataSnapshot.getKey()).setValue(true);
+                }
             }
 
             @Override
@@ -147,67 +140,24 @@ public class SwipeActivity extends Activity {
     private String oppositeUserType;
     public void checkUserType() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        DatabaseReference walkerDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Dog Walker");
-        walkerDb.addChildEventListener(new ChildEventListener() {
+        DatabaseReference userDb = usersDb.child(user.getUid());
+        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getKey().equals(user.getUid())) {
-                    userType = "Dog Walker";
-                    oppositeUserType = "Dog Owner";
-                    getOppositeUserType();
-
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    if(dataSnapshot.child("userType").getValue() !=null){
+                        userType = dataSnapshot.child("userType").getValue().toString();
+                        switch (userType) {
+                            case "Dog Owner":
+                                oppositeUserType = "Dog Walker";
+                                break;
+                            case "Dog Walker":
+                                oppositeUserType = "Dog Owner";
+                                break;
+                        }
+                        getOppositeUserType();
+                    }
                 }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-
-            }
-        });
-
-
-        DatabaseReference ownerDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Dog Owner");
-        ownerDb.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getKey().equals(user.getUid())) {
-                    userType = "Dog Owner";
-                    oppositeUserType = "Dog Walker";
-                    getOppositeUserType();
-
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
             }
 
             @Override
@@ -216,14 +166,18 @@ public class SwipeActivity extends Activity {
             }
         });
 
-    }
+        }
+
+
+
+
+
 
     public void getOppositeUserType() {
-        DatabaseReference oppositeUserTypeDb = FirebaseDatabase.getInstance().getReference().child("Users").child(oppositeUserType);
-        oppositeUserTypeDb.addChildEventListener(new ChildEventListener() {
+        usersDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("no").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !dataSnapshot.child("connections").child("yes").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("no").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !dataSnapshot.child("connections").child("yes").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()) && dataSnapshot.child("userType").getValue().toString().equals(oppositeUserType)){
 
                     String profileImageUrl = "default";
                     if(dataSnapshot.child("profileImageUrl").getValue() != null){
@@ -263,17 +217,6 @@ public class SwipeActivity extends Activity {
 
         });
 
-     /**   View b = findViewById(R.id.btnEdit);
-        if (userType == "Dog Walker"){
-            b.setVisibility(View.GONE);
-        }
-
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });*/
 
     }
 
@@ -284,9 +227,14 @@ public class SwipeActivity extends Activity {
 //Creating the edit profile page adapting code from: https://www.youtube.com/watch?v=MUiZhCUHXhk&ab_channel=SimCoder
     public void goToSettings(View view) {
         Intent intent = new Intent(SwipeActivity.this,SettingsActivity.class );
-        intent.putExtra("userType", userType);
         startActivity(intent);
         return;
     }
+
+   // public void goToMatches(View view) {
+    //   Intent intent = new Intent(SwipeActivity.this, MatchesActivity.class );
+      // startActivity(intent);
+    //   return;
+    //}
 }
 

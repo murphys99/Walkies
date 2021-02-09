@@ -139,7 +139,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                            // User user = new User(fname, lname, email, password, phone);
                             String userId = mAuth.getCurrentUser().getUid();
 
-                            DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference().child("Users").child(radioButton.getText().toString())
+                            DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference().child("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             Map userInfo = new HashMap<>();
                             userInfo.put("fname",fname);
@@ -147,6 +147,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                             userInfo.put("email",email);
                             userInfo.put("password",password);
                             userInfo.put("phone",phone);
+                            userInfo.put("userType", radioButton.getText().toString());
                             userInfo.put("profileImageUrl", "default");
                             currentUserDb .updateChildren(userInfo);
 
