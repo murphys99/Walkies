@@ -231,7 +231,13 @@ public class SwipeActivity extends Activity {
         return;
     }
 
-   // public void goToMatches(View view) {
+    public void goToMatches(View view) {
+        Intent intent = new Intent(SwipeActivity.this,MatchesActivity.class );
+        startActivity(intent);
+        return;
+    }
+
+    // public void goToMatches(View view) {
     //   Intent intent = new Intent(SwipeActivity.this, MatchesActivity.class );
       // startActivity(intent);
     //   return;

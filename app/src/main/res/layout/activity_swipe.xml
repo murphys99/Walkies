@@ -23,5 +23,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btnMatches"
+        android:layout_width="49dp"
+        android:layout_height="45dp"
+        android:background="@drawable/ic_chat"
+        android:onClick="goToMatches"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
