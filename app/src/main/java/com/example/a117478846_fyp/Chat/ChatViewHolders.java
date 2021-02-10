@@ -1,4 +1,4 @@
-package com.example.a117478846_fyp;
+package com.example.a117478846_fyp.Chat;
 //implementing a chat feature using https://www.youtube.com/watch?v=9dC4w04AuOs&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=16&ab_channel=SimCoder
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +9,12 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a117478846_fyp.Chat.ChatActivity;
+import com.example.a117478846_fyp.R;
 
-public class MatchesViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class ChatViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView mMatchId, mMatchName;
     public ImageView mMatchImage;
-    public MatchesViewHolders(View itemView){
+    public ChatViewHolders(View itemView){
         super(itemView);
         itemView.setOnClickListener(this);
 

@@ -11,10 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".Chat.ChatActivity"></activity>
         <activity
             android:name=".MatchesActivity"
             android:label="@string/title_activity_matches"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".SwipeActivity" />
         <activity android:name=".RegisterDog" />
