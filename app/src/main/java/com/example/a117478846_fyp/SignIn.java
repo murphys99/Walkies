@@ -25,6 +25,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
         forgotPassword = (TextView) findViewById(R.id.forgotPassword);
         forgotPassword.setOnClickListener(this);
+
+
     }
 
     @Override

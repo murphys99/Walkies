@@ -36,6 +36,7 @@ public class SwipeActivity extends Activity {
     private int i;
 
     private FirebaseAuth mAuth;
+    private String currentUId;
 
     ListView listView;
     List<cards> rowItems;
@@ -52,6 +53,7 @@ public class SwipeActivity extends Activity {
         usersDb = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
+        currentUId = mAuth.getCurrentUser().getUid();
         checkUserType();
 
 
@@ -123,7 +125,8 @@ public class SwipeActivity extends Activity {
                 if (dataSnapshot.exists()) {
                     Toast.makeText(SwipeActivity.this, "New connection", Toast.LENGTH_LONG).show();
                     usersDb.child(dataSnapshot.getKey()).child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
-                    usersDb.child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(dataSnapshot.getKey()).setValue(true);
+                    usersDb.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+
                 }
             }
 
@@ -177,20 +180,21 @@ public class SwipeActivity extends Activity {
         usersDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("no").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !dataSnapshot.child("connections").child("yes").hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid()) && dataSnapshot.child("userType").getValue().toString().equals(oppositeUserType)){
-
-                    String profileImageUrl = "default";
-                    if(dataSnapshot.child("profileImageUrl").getValue() != null){
-                        if(!dataSnapshot.child("profileImageUrl").getValue().equals("default")){
+                if (dataSnapshot.child("userType").getValue() != null) {
+                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("no").hasChild(currentUId) && !dataSnapshot.child("connections").child("yes").hasChild(currentUId) && dataSnapshot.child("userType").getValue().toString().equals(oppositeUserType)) {
+                        String profileImageUrl = "default";
+                        //   if(dataSnapshot.child("profileImageUrl").getValue() != null){
+                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
                             profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 
-                            }
+                        }
+
+
+                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("fname").getValue().toString(), profileImageUrl);
+                        rowItems.add(item);
+                        arrayAdapter.notifyDataSetChanged();
+
                     }
-
-                    cards item = new cards(dataSnapshot.getKey(),dataSnapshot.child("fname").getValue().toString(), profileImageUrl);
-                    rowItems.add(item);
-                    arrayAdapter.notifyDataSetChanged();
-
                 }
             }
 
