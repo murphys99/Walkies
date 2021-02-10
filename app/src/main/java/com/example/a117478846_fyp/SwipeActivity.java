@@ -2,7 +2,7 @@ package com.example.a117478846_fyp;
 //potential matches to user video https://www.youtube.com/watch?v=xTGyUUsOTAQ&t=92s&ab_channel=SimCoder
 // adapted this video for matching users https://www.youtube.com/watch?v=Xp61U9sCiTw&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=9&pbjreload=101&ab_channel=SimCoder
 //setting an image to a card using this tutorial https://www.youtube.com/watch?v=h2yHW5wuxoE&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=12&ab_channel=SimCoder
-
+//setting up chat functionality with video https://www.youtube.com/watch?v=9dC4w04AuOs&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=16&ab_channel=SimCoder
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -124,8 +124,12 @@ public class SwipeActivity extends Activity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     Toast.makeText(SwipeActivity.this, "New connection", Toast.LENGTH_LONG).show();
-                    usersDb.child(dataSnapshot.getKey()).child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(true);
-                    usersDb.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).setValue(true);
+
+                    String key = FirebaseDatabase.getInstance().getReference().child("Chat").push().getKey();
+
+                    usersDb.child(dataSnapshot.getKey()).child("connections").child("matches").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("ChatId").setValue(key);
+                    usersDb.child(currentUId).child("connections").child("matches").child(dataSnapshot.getKey()).child("ChatId").setValue(key);
+
 
                 }
             }
