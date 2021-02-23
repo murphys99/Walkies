@@ -17,11 +17,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 //Adapted code from this video https://www.youtube.com/watch?v=w-Uv-ydX_LY&ab_channel=CodeWithMazn
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private Button signIn;
     private TextView register, forgotPassword;
     private EditText editTextEmail, editTextPassword;
+    private String userId, fname, email, phone, bio, profileImageUrl, userType;
+
+
 
     private FirebaseAuth mAuth;
 
@@ -30,6 +39,9 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        mAuth = FirebaseAuth.getInstance();
+
+
 
         signIn = (Button) findViewById(R.id.btnLogIn);
         signIn.setOnClickListener(this);
@@ -38,7 +50,6 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
-        mAuth = FirebaseAuth.getInstance();
 
         register = (TextView) findViewById(R.id.register);
         register.setOnClickListener(this);
@@ -90,11 +101,14 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
             editTextPassword.requestFocus();
             return;
         }
+
+
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
                     if (user.isEmailVerified()) {
                         //redirect to user profile
@@ -114,3 +128,6 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         });
     }
 }
+
+
+

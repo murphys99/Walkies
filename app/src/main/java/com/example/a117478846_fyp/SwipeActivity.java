@@ -6,6 +6,8 @@ package com.example.a117478846_fyp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +17,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -29,19 +42,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SwipeActivity extends Activity {
+public class SwipeActivity extends Activity implements LocationListener {
 
     private cards cards_data[];
     private com.example.a117478846_fyp.arrayAdapter arrayAdapter;
     private int i;
+    final long MIN_TIME_INTERVAL = 60 * 1000L;
+    private boolean isGPSEnabled = false;
+    private boolean isNetworkEnabled = false;
+    private Location location;          //  location.getLatitude() & location.getLongitude() will give you what you need...
+    private LocationManager locationManager;
+
+    private GoogleMap mMap;
+    Location lastLocation;
+    LocationRequest locationRequest;
 
     private FirebaseAuth mAuth;
-    private String currentUId;
 
     ListView listView;
     List<cards> rowItems;
 
     private DatabaseReference usersDb;
+    private String currentUId;
+
+    public SwipeActivity(){
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+    }
+
 
 
     @Override
@@ -180,7 +208,7 @@ public class SwipeActivity extends Activity {
 
 
 
-    public void getOppositeUserType() {
+    private void getOppositeUserType() {
         usersDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -244,6 +272,21 @@ public class SwipeActivity extends Activity {
         startActivity(intent);
         return;
     }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        lastLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference LocationRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        GeoFire geoFire = new GeoFire(LocationRef);
+        geoFire.setLocation(userId, new GeoLocation(location.getLatitude(),location.getLongitude()));
+
+
+
+    }
+
 
     // public void goToMatches(View view) {
     //   Intent intent = new Intent(SwipeActivity.this, MatchesActivity.class );

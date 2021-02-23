@@ -35,16 +35,16 @@ import java.util.Map;
 //https://www.youtube.com/watch?v=MUiZhCUHXhk&list=PLxabZQCAe5fio9dm1Vd0peIY6HLfo5MCf&index=10&ab_channel=SimCoder
 public class SettingsActivity extends AppCompatActivity {
 
-    private EditText mFnameField, mPhoneField, mBioField;
+    private EditText mFnameField, mEmailField, mPhoneField, mBioField;
 
-    private Button mBack, mSave;
+    private Button mBack, mSave, mAdd;
 
     private ImageView mProfileImage;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mUserDatabase;
 
-    private String userId, fname, phone, bio, profileImageUrl, userType;
+    private String userId, fname,email, phone, bio, profileImageUrl, userType;
 
     private Uri resultUri;
 
@@ -55,20 +55,25 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         mFnameField = (EditText) findViewById(R.id.firstName);
+        mEmailField = (EditText) findViewById(R.id.email);
         mPhoneField = (EditText) findViewById(R.id.phone);
         mBioField = (EditText) findViewById(R.id.bio);
+
 
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mBack = (Button) findViewById(R.id.back);
         mSave = (Button) findViewById(R.id.save);
+        mAdd  =  (Button) findViewById(R.id.add);
 
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
         getUserInfo();
+
+
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +101,13 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        mAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),RegisterDog.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -109,10 +121,15 @@ public class SettingsActivity extends AppCompatActivity {
                         fname = map.get("fname").toString();
                         mFnameField.setText(fname);
                     }
+                    if(map.get("email") != null){
+                        email = map.get("email").toString();
+                        mEmailField.setText(email);
+                    }
+
                     if (map.get("phone") != null) {
                         phone = map.get("phone").toString();
                         mPhoneField.setText(phone);
-
+                    }
                         if (map.get("bio") != null) {
                             bio = map.get("bio").toString();
                             mBioField.setText(bio);
@@ -133,7 +150,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -144,11 +161,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void saveUserInformation() {
         fname = mFnameField.getText().toString();
+        email= mEmailField.getText().toString();
         phone = mPhoneField.getText().toString();
         bio = mBioField.getText().toString();
 
         Map userInfo = new HashMap<>();
         userInfo.put("fname",fname);
+        userInfo.put("email",email);
         userInfo.put("phone",phone);
         userInfo.put("bio",bio);
         mUserDatabase.updateChildren(userInfo);
@@ -209,5 +228,9 @@ public class SettingsActivity extends AppCompatActivity {
             resultUri = imageUri;
             mProfileImage.setImageURI(resultUri);
         }
+    }
+
+    public void goToRegusterDog(View view) {
+
     }
 }
