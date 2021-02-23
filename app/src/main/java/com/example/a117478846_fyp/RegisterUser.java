@@ -1,14 +1,10 @@
 package com.example.a117478846_fyp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
@@ -20,9 +16,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -43,16 +36,8 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
     RadioGroup mRadioGroup;
 
 
-
     private FirebaseAuth mAuth;
-    private DatabaseReference db;
-
-
     private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
-    Location lastLocation;
-    LocationRequest locationRequest;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +45,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.register_user);
 
         mAuth = FirebaseAuth.getInstance();
+
 
 
         btnRegister = (Button) findViewById(R.id.btnRegister);
@@ -74,8 +60,8 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
 
-
     }
+
 
     @Override
     public void onClick(View v) {
@@ -142,7 +128,6 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         }
 
 
-
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -156,9 +141,6 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
 
                             DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference().child("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-
-
                             Map userInfo = new HashMap<>();
                             userInfo.put("fname",fname);
                             userInfo.put("lname",lname);
@@ -180,6 +162,4 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
-
-
-    }
+}

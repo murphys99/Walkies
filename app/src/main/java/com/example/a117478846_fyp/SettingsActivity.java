@@ -60,20 +60,18 @@ public class SettingsActivity extends AppCompatActivity {
         mBioField = (EditText) findViewById(R.id.bio);
 
 
-
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mBack = (Button) findViewById(R.id.back);
         mSave = (Button) findViewById(R.id.save);
         mAdd  =  (Button) findViewById(R.id.add);
 
+
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
         getUserInfo();
-
-
         mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +80,14 @@ public class SettingsActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 startActivityForResult(intent,1);
 
+            }
+        });
+
+        mAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),RegisterDog.class);
+                startActivity(intent);
             }
         });
 
@@ -101,13 +107,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        mAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),RegisterDog.class);
-                startActivity(intent);
-            }
-        });
 
     }
 
@@ -129,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
                     if (map.get("phone") != null) {
                         phone = map.get("phone").toString();
                         mPhoneField.setText(phone);
-                    }
+
                         if (map.get("bio") != null) {
                             bio = map.get("bio").toString();
                             mBioField.setText(bio);
@@ -150,7 +149,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     }
                 }
-
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -229,8 +228,7 @@ public class SettingsActivity extends AppCompatActivity {
             mProfileImage.setImageURI(resultUri);
         }
     }
-
-    public void goToRegusterDog(View view) {
+    public void goToRegisterDog(View view) {
 
     }
 }

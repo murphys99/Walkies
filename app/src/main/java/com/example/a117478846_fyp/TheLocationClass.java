@@ -18,7 +18,7 @@ public class TheLocationClass implements LocationListener {
 
     public TheLocationClass() {
         //error with getSystemService - "Cannot resolve method getSystemService"
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
     }
 
     public void requestForUpdates() {

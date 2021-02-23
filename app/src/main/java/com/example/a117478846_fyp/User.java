@@ -9,7 +9,7 @@ public class User {
 
     }
 
-    public User(String fname, String lname, String email, String password, String phone, String userType) {
+    public User(String fname, String lname, String email, String password, String phone,String userType) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
